@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const mongoose = require('mongoose');
+const User = require('./dataModel');
 
 const app = express();
 app.use(cors());
