@@ -16,10 +16,16 @@ const corsOptions = {
 };
 
 const app = express();
-app.use(cors());
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
 
 app.get("/", function (req, res) {
   res.send("Hi");
@@ -131,6 +137,15 @@ app.put('/project/add', authenticate, async(req, res) => {
     const { id, name } = req.body;
     await completeStep(id, name);
     res.status(200).send("Step updated");
+  } catch (error) {
+    res.status(500).json({message: error.message});
+  }
+})
+
+app.get('/user/me', authenticate, async(req, res) => {
+  try {
+    // verifyToken(req.user.userId);
+    res.status(200).json(req.user.userId);
   } catch (error) {
     res.status(500).json({message: error.message});
   }

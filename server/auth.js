@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require("./dataModel.js")
+const { User, Project } = require("./dataModel.js")
 require('dotenv').config();
 
 async function createUser(username, email, password) {
