@@ -18,16 +18,24 @@ function PageList(){
                 }
             });
             const data = await res.json();
-            if (!data.error){
-                setToken(res.data);
-                console.log("hi");
+            console.log(data);
+
+            if (data !== "Invalid token"){
+                console.log(data);
+                setToken(data);
             }
         };
         checkLogIn();
 
     }, []);
 
-    if(token)
+    function LandingPage () {
+        if(token !== null){
+            return <Dashboard />
+        } else {
+            return <Login />
+        }
+    }
 
     return (
     <>
@@ -37,6 +45,7 @@ function PageList(){
             <Link to="/register">Register</Link>
         )}
         <Routes>
+            <Route path='/' element={<LandingPage />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/dashboard'  element={<Dashboard />} />

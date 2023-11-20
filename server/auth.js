@@ -29,7 +29,7 @@ async function createUser(username, email, password) {
 
 async function logIn(username, password) {
     if (!await User.exists({ name: username })){
-        throw new Error('User does not exist');
+        throw new Error('Incorrect username or password');
     }
 
     const user = await User.find({ name: username });
@@ -45,7 +45,7 @@ async function logIn(username, password) {
         );
         return token;
     } else {
-        throw new Error("Incorrect password");
+        throw new Error('Incorrect username or password');
     }
 }
 

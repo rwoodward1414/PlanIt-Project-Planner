@@ -37,9 +37,9 @@ app.post('/user/createAccount', async(req, res) => {
     const { username, email, password } = req.body;
     const token = await createUser(username, email, password);
     console.log(token);
-    res.cookie("token", token, { httpOnly: true }).status(200).send("Token sent!");
+    res.cookie("token", token, { httpOnly: true }).status(200).send({text: "Token sent!"});
   } catch (error) {
-    res.status(400).json({message: error.message});
+    res.status(400).send({error: error.message});
   }
 });
 
@@ -50,7 +50,7 @@ app.post('/user/login', async(req, res) => {
     token = await logIn(username, password);
     res.cookie("token", token, { httpOnly: true }).status(200).send("Token sent!");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(401).send({error: error.message});
   }
 });
 
@@ -70,7 +70,7 @@ app.post('/category/create', authenticate, async(req, res) => {
     await createCategory(req.user.userId, category);
     res.status(200).send("Category added");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({error: error.message});
   }
 });
 
@@ -80,7 +80,7 @@ app.delete('/category/delete', authenticate, async(req, res) => {
     await removeCategory(req.user.userId, category);
     res.status(200).send("Category deleted");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({error: error.message});
   }
 });
 
@@ -89,7 +89,7 @@ app.get('/category', authenticate, async(req, res) => {
     const list = await listCategory(req.user.userId);
     res.send(list);
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({error: error.message});
   }
 });
 
@@ -99,7 +99,7 @@ app.post('/project/create', authenticate, async(req, res) => {
     await createProject(req.user.userId, name, category, date);
     res.status(200).send("Project added");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({message: error.message});
   }
 });
 
@@ -109,7 +109,7 @@ app.delete('/project/delete', authenticate, async(req, res) => {
     await removeProject(req.user.userId, id);
     res.status(200).send("Project removed");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({message: error.message});
   }
 });
 
@@ -119,7 +119,7 @@ app.post('/project/add', authenticate, async(req, res) => {
     await addStep(id, name, date);
     res.status(200).send("Step added");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({message: error.message});
   }
 });
 
@@ -147,7 +147,7 @@ app.get('/user/me', authenticate, async(req, res) => {
     // verifyToken(req.user.userId);
     res.status(200).json(req.user.userId);
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).send({error: error.message});
   }
 })
 
