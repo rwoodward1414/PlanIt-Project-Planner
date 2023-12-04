@@ -1,3 +1,4 @@
+const { sanitizeFilter } = require("mongoose");
 const { User, Project } = require("./dataModel.js")
 
 
@@ -13,7 +14,7 @@ async function createProject(userId, name, category, due){
         due: Date(due),
         steps: [],
         status: "notDone"
-    });
+    }).setOptions({ sanitizeFilter: true });
 
     console.log(project);
 
@@ -26,6 +27,10 @@ async function createProject(userId, name, category, due){
 
 async function removeProject(userId, projectId){
     const user = await User.findById(userId);
+    if (!user.projects.includes(projectId)) {
+        throw new Error("Project does not exist");
+    }
+
     await Project.deleteOne({ _id: projectId });
     user.projects.pull(projectId);
     await user.save();
@@ -35,6 +40,7 @@ async function removeProject(userId, projectId){
 async function addStep(projectId, name, date){
     const project = await Project.findById(projectId);
     const step = { step: name, due: Date(date), completed: false };
+    sanitizeFilter(step);
     project.steps.push(step);
     await project.save();
     return;

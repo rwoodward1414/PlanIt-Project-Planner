@@ -7,14 +7,14 @@ async function createUser(username, email, password) {
     const saltRounds = parseInt(process.env.SALT_NUM);
     let user;
 
-    if (await User.exists({ name: username })){
+    if (await User.exists({ name: username }).setOptions({ sanitizeFilter: true })){
         throw new Error('Username already taken');
-    } else if (await User.exists({ email: email })){
+    } else if (await User.exists({ email: email }).setOptions({ sanitizeFilter: true })){
         throw new Error('Email already used');
     }
 
     const hashed = await bcrypt.hash(password, saltRounds);
-    user = await User.create({ name: username, email: email, password: hashed });
+    user = await User.create({ name: username, email: email, password: hashed }).setOptions({ sanitizeFilter: true });
 
     const token = jwt.sign(
         { userId: user._id },
@@ -28,11 +28,11 @@ async function createUser(username, email, password) {
 }
 
 async function logIn(username, password) {
-    if (!await User.exists({ name: username })){
+    if (!await User.exists({ name: username }).setOptions({ sanitizeFilter: true })){
         throw new Error('Incorrect username or password');
     }
 
-    const user = await User.find({ name: username });
+    const user = await User.find({ name: username }).setOptions({ sanitizeFilter: true });
     const valid = await bcrypt.compare(password, user[0].password);
 
     if (valid) {

@@ -5,13 +5,13 @@ async function createCategory(userId, category){
     if (user.categories.includes(category)) {
         throw new Error("Catergory of that name already exists");
     }
-    user.categories.push(category);
+    user.categories.push(category).setOptions({ sanitizeFilter: true });
     await user.save();
     return;
 }
 
 async function removeCategory(userId, category){
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
     if (!user.categories.includes(category)) {
         throw new Error("Catergory does not exist");
     }
@@ -21,7 +21,7 @@ async function removeCategory(userId, category){
 }
 
 async function listCategory(userId){
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
     return user.categories;
 }
 

@@ -48,7 +48,7 @@ app.post('/user/login', async(req, res) => {
   try {
     const { username, password } = req.body;
     token = await logIn(username, password);
-    res.cookie("token", token, { httpOnly: true }).status(200).send("Token sent!");
+    res.cookie("token", token, { httpOnly: true }).status(200).send({text: "Token sent!"});
   } catch (error) {
     res.status(401).send({error: error.message});
   }
@@ -99,7 +99,7 @@ app.post('/project/create', authenticate, async(req, res) => {
     await createProject(req.user.userId, name, category, date);
     res.status(200).send("Project added");
   } catch (error) {
-    res.status(500).send({message: error.message});
+    res.status(500).send({error: error.message});
   }
 });
 
@@ -109,7 +109,7 @@ app.delete('/project/delete', authenticate, async(req, res) => {
     await removeProject(req.user.userId, id);
     res.status(200).send("Project removed");
   } catch (error) {
-    res.status(500).send({message: error.message});
+    res.status(500).send({error: error.message});
   }
 });
 
@@ -119,7 +119,7 @@ app.post('/project/add', authenticate, async(req, res) => {
     await addStep(id, name, date);
     res.status(200).send("Step added");
   } catch (error) {
-    res.status(500).send({message: error.message});
+    res.status(500).send({error: error.message});
   }
 });
 
@@ -128,7 +128,7 @@ app.get('/project', authenticate, async(req, res) => {
     const list = await listProject(req.user.userId);
     res.send(list);
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).json({error: error.message});
   }
 });
 
@@ -138,7 +138,7 @@ app.put('/project/add', authenticate, async(req, res) => {
     await completeStep(id, name);
     res.status(200).send("Step updated");
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).json({error: error.message});
   }
 })
 
