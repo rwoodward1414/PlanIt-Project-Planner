@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User, Project } = require("./dataModel.js")
+const { User, Project } = require("./dataModel.js");
+const { sanitizeFilter } = require('mongoose');
 require('dotenv').config();
 
 async function createUser(username, email, password) {
@@ -14,7 +15,9 @@ async function createUser(username, email, password) {
     }
 
     const hashed = await bcrypt.hash(password, saltRounds);
-    user = await User.create({ name: username, email: email, password: hashed }).setOptions({ sanitizeFilter: true });
+    const userInfo = { name: username, email: email, password: hashed };
+    sanitizeFilter(userInfo);
+    user = await User.create(userInfo);
 
     const token = jwt.sign(
         { userId: user._id },

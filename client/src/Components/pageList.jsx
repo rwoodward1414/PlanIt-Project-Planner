@@ -1,7 +1,7 @@
 import Register from './register';
 import Login from './login';
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link } from 'react-router-dom';
 import Dashboard from './dashboard';
 
 
@@ -18,10 +18,7 @@ function PageList(){
                 }
             });
             const data = await res.json();
-            console.log(data);
-
             if (data !== "Invalid token"){
-                console.log(data);
                 setToken(data);
             }
         };
@@ -38,19 +35,19 @@ function PageList(){
     }
 
     return (
-    <>
-        {token ? (
+    <div class='h-full flex bg-emerald-100'>
+        {/* {token ? (
             <Link to="/dashboard">Dashboard</Link>
         ) : (
             <Link to="/register">Register</Link>
-        )}
+        )} */}
         <Routes>
             <Route path='/' element={<LandingPage />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
-            <Route path='/dashboard'  element={<Dashboard />} />
+            <Route path='/dashboard' element={<Dashboard />} />
         </Routes>
-    </>
+    </div>
     )
 }
 
