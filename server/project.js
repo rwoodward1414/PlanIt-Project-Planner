@@ -1,5 +1,5 @@
 const { sanitizeFilter } = require("mongoose");
-const { User, Project } = require("./dataModel.js")
+const { User, Project, Task } = require("./dataModel.js")
 
 
 async function createProject(userId, name, category, due){
@@ -12,11 +12,8 @@ async function createProject(userId, name, category, due){
         name: name,
         category: category,
         due: Date(due),
-        steps: [],
-        status: "notDone"
+        status: false
     }).setOptions({ sanitizeFilter: true });
-
-    console.log(project);
 
     await project.save();
     user.projects.push(project._id);
@@ -37,12 +34,14 @@ async function removeProject(userId, projectId){
     return;
 }
 
-async function addStep(projectId, name, date){
-    const project = await Project.findById(projectId);
-    const step = { step: name, due: Date(date), completed: false };
-    sanitizeFilter(step);
-    project.steps.push(step);
-    await project.save();
+async function addTask(projectId, name, date){
+    const task = await Task.create({
+        name: name,
+        due: new Date(date),
+        status: false,
+        projectID: projectId
+    }).setOptions({ sanitizeFilter: true });
+    await task.save();
     return;
 }
 
@@ -53,11 +52,42 @@ async function listProject(userId){
     return list;
 }
 
-async function completeStep(projectId, name){
-    const project = await Project.findById(projectId);
-    let step = project.steps.find(step => step.step == name);
-    step.completed = true;
-    await project.save();
+async function listTasks(projectId, userId){
+    let taskList = [];
+    taskList = await Task.find({projectID: projectId});
+    return taskList;
 }
 
-module.exports = { createProject, removeProject, addStep, listProject, completeStep };
+async function completeTask(projectId, name){
+    await Task.findOneAndUpdate({name: name, projectID: projectId}, {status: true});
+}
+
+async function organiseByDate(userId){
+    // const projects = listProject(userId);
+    // (await projects).forEach(async project => {
+    //     const tasks = listTasks(project._id, userId);
+    //     (await tasks).forEach(task => {
+    //         organised[task.due] = [];
+    //         organised[task.due].push({task: task.name, project: project.name, taskId: task._id, projectId: project._id});
+    //     })
+    // });
+    const user = await User.findById(userId);
+    const filter = {projectID: {$in: user.projects}};
+
+    const organised = await Task.aggregate([
+        {$match: filter},
+        {
+            $group: {
+                _id: {
+                    $dateToString: { format: '%Y-%m-%d', date: '$due'}
+                },
+                tasks: { $push: '$$ROOT' }
+            }
+        }
+    ]);
+
+    console.log(organised);
+    return organised;
+}
+
+module.exports = { createProject, removeProject, addTask, listProject, completeTask, listTasks, organiseByDate };

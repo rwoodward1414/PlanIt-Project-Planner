@@ -8,7 +8,7 @@ require('dotenv').config();
 const authenticate = require('./authen');
 const { createUser, logIn, verifyToken } = require('./auth');
 const { createCategory, removeCategory, listCategory } = require('./category');
-const { createProject, removeProject, addStep, listProject, completeStep } = require('./project');
+const { createProject, removeProject, addTask, listProject, completeTask, listTasks, organiseByDate } = require('./project');
 
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -116,8 +116,8 @@ app.delete('/project/delete', authenticate, async(req, res) => {
 app.post('/project/add', authenticate, async(req, res) => {
   try {
     const { id, name, date } = req.body;
-    await addStep(id, name, date);
-    res.status(200).send("Step added");
+    await addTask(id, name, date);
+    res.status(200).send("Task added");
   } catch (error) {
     res.status(500).send({error: error.message});
   }
@@ -132,11 +132,31 @@ app.get('/project', authenticate, async(req, res) => {
   }
 });
 
+app.get('/project/list', authenticate, async(req, res) => {
+  try {
+    const { id } = req.body;
+    const list = await listTasks(id, req.user.userId);
+    res.send(list);
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+});
+
+app.get('/tasks', authenticate, async(req, res) => {
+  try {
+    const list = await organiseByDate(req.user.userId);
+    res.send(list);
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+});
+
+
 app.put('/project/add', authenticate, async(req, res) => {
   try {
     const { id, name } = req.body;
-    await completeStep(id, name);
-    res.status(200).send("Step updated");
+    await completeTask(id, name);
+    res.status(200).send("Task updated");
   } catch (error) {
     res.status(500).json({error: error.message});
   }
@@ -144,7 +164,6 @@ app.put('/project/add', authenticate, async(req, res) => {
 
 app.get('/user/me', authenticate, async(req, res) => {
   try {
-    // verifyToken(req.user.userId);
     res.status(200).json(req.user.userId);
   } catch (error) {
     res.status(500).send({error: error.message});
