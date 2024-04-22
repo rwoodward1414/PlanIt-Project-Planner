@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
+import NewProject from "./newproject";
+import NewCategory from "./newcat";
 function Dashboard () {
 
     const navigate = useNavigate();
@@ -8,6 +10,24 @@ function Dashboard () {
     const [weekStart, setWeekStart] = React.useState(Date());
     const daysOfWeek = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat'];
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const [openNewProject, setOpenNewProject] = React.useState(false);
+    const [openNewCat, setOpenNewCat] = React.useState(false);
+
+    const showNewProject = () => {
+        setOpenNewProject(true);
+    };
+
+    const hideNewProjct = () => {
+        setOpenNewProject(false);
+    }
+
+    const showNewCat = () => {
+        setOpenNewCat(true);
+    }
+
+    const hideNewCat = () => {
+        setOpenNewCat(false);
+    }
 
     function formatDateToYYYYMMDD(date) {
         const year = date.getFullYear();
@@ -64,13 +84,17 @@ function Dashboard () {
         if (tasksForDay.length === 0) {
             return (
             <div class="w-2/12 m-1 bg-white rounded-lg">
-                <p>{d.d} - {d.date.getDate()}</p>
+                <div class="rounded-t-lg bg-slate-300">
+                    <p class="text-center">{d.d} - {d.date.getDate()}</p>
+                </div>
             </div>
             );
         }
         return (
             <div class="w-2/12 m-1 bg-white rounded-lg">
-                <p>{d.d} - {d.date.getDate()}</p>
+                <div class="rounded-t-lg bg-slate-300">
+                    <p class="text-center">{d.d} - {d.date.getDate()}</p>
+                </div>
                 {tasksForDay[0].tasks.map(task => (
                     <TaskCard task={task}></TaskCard>
                 ))}
@@ -142,14 +166,25 @@ function Dashboard () {
         return (
             <>
             {list.map(project => (
-                <div key={project.id}>
+                <div key={project._id}>
                     <h4>{project.name}</h4>
                     <p>{project.category}</p>
                     <p>{daysOfWeek[new Date(project.due).getDay()]} {new Date(project.due).getDate()}/{new Date(project.due).getMonth() + 1}</p>
+                    <AddTaskButton id={project._id}></AddTaskButton>
                 </div>
             ))}
             </>
         )
+    }
+
+    const AddTaskButton = (id) => {
+        if (id.id !== undefined) {
+            return (
+                <button type="button" onClick={() => navigate(`/taskadd/${id.id}`)}>Add Task</button>
+            )
+        } else {
+            return null;
+        }
     }
 
     if (projects.length < 1){
@@ -162,12 +197,15 @@ function Dashboard () {
 
     return (
         <>
+            <NewProject open={openNewProject} close={hideNewProjct}></NewProject>
+            <NewCategory open={openNewCat} close={hideNewCat}></NewCategory>
             <h2>Projects</h2>
             <div class="flex w-full p-10">
                 <Week />
                 <aside>
                     <section class="flex flex-row">
-                        <button type="button" class="my-5 h-10 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 rounded-md text-white w-1/2 m-auto">New Project</button>
+                        <button type="button" class="my-5 h-10 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 rounded-md text-white w-1/2 m-auto" onClick={showNewProject}>New Project</button>
+                        <button type="button" class="my-5 h-10 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 rounded-md text-white w-1/2 m-auto" onClick={showNewCat}>New Category</button>
                         <button type="button" class="my-5 h-10 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 rounded-md text-white w-1/2 m-auto">Settings (?)</button>
                     </section>
                     <section>

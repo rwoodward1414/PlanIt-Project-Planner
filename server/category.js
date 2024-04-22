@@ -1,11 +1,13 @@
-const User = require("./dataModel.js")
+const { sanitizeFilter } = require("mongoose");
+const { User } = require("./dataModel.js");
 
 async function createCategory(userId, category){
     const user = await User.findById(userId)
     if (user.categories.includes(category)) {
+        console.log(category);
         throw new Error("Catergory of that name already exists");
     }
-    user.categories.push(category).setOptions({ sanitizeFilter: true });
+    user.categories.push(category);
     await user.save();
     return;
 }

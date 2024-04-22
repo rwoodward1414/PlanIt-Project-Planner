@@ -1,5 +1,6 @@
 import Register from './register';
 import Login from './login';
+import NewTask from './newtask';
 import React, { useEffect } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 import Dashboard from './dashboard';
@@ -46,6 +47,7 @@ function PageList(){
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/taskadd/:id' element={<NewTask />} />
         </Routes>
     </div>
     )

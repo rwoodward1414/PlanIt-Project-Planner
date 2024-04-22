@@ -1,13 +1,13 @@
 const express = require("express");
 const cors = require('cors');
 const mongoose = require('mongoose');
-const User = require('./dataModel');
+// const User = require('./dataModel');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const authenticate = require('./authen');
 const { createUser, logIn, verifyToken } = require('./auth');
-const { createCategory, removeCategory, listCategory } = require('./category');
+const { createCategory, removeCategory, listCategory } = require('./category.js');
 const { createProject, removeProject, addTask, listProject, completeTask, listTasks, organiseByDate } = require('./project');
 
 const corsOptions = {
@@ -68,7 +68,7 @@ app.post('/category/create', authenticate, async(req, res) => {
   try {
     const { category } = req.body;
     await createCategory(req.user.userId, category);
-    res.status(200).send("Category added");
+    res.status(200).send({});
   } catch (error) {
     res.status(500).send({error: error.message});
   }
@@ -117,7 +117,7 @@ app.post('/project/add', authenticate, async(req, res) => {
   try {
     const { id, name, date } = req.body;
     await addTask(id, name, date);
-    res.status(200).send("Task added");
+    res.status(200).send({});
   } catch (error) {
     res.status(500).send({error: error.message});
   }

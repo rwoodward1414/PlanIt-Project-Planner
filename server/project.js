@@ -1,5 +1,5 @@
 const { sanitizeFilter } = require("mongoose");
-const { User, Project, Task } = require("./dataModel.js")
+const { User, Project, Task } = require("./dataModel.js");
 
 
 async function createProject(userId, name, category, due){
@@ -8,12 +8,9 @@ async function createProject(userId, name, category, due){
         throw new Error("Catergory does not exist");
     }
 
-    let project = await Project.create({
-        name: name,
-        category: category,
-        due: Date(due),
-        status: false
-    }).setOptions({ sanitizeFilter: true });
+    const projectInfo = { name: name, category: category, due: Date(due), status: false };
+    sanitizeFilter(projectInfo);
+    let project = await Project.create(projectInfo);
 
     await project.save();
     user.projects.push(project._id);
@@ -35,12 +32,9 @@ async function removeProject(userId, projectId){
 }
 
 async function addTask(projectId, name, date){
-    const task = await Task.create({
-        name: name,
-        due: new Date(date),
-        status: false,
-        projectID: projectId
-    }).setOptions({ sanitizeFilter: true });
+    const taskInfo = { name: name, due: new Date(date), status: false, projectID: projectId };
+    sanitizeFilter(taskInfo);
+    let task = await Task.create(taskInfo);
     await task.save();
     return;
 }
@@ -63,14 +57,7 @@ async function completeTask(projectId, name){
 }
 
 async function organiseByDate(userId){
-    // const projects = listProject(userId);
-    // (await projects).forEach(async project => {
-    //     const tasks = listTasks(project._id, userId);
-    //     (await tasks).forEach(task => {
-    //         organised[task.due] = [];
-    //         organised[task.due].push({task: task.name, project: project.name, taskId: task._id, projectId: project._id});
-    //     })
-    // });
+
     const user = await User.findById(userId);
     const filter = {projectID: {$in: user.projects}};
 
