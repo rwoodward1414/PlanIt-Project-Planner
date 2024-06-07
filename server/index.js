@@ -97,7 +97,7 @@ app.post('/project/create', authenticate, async(req, res) => {
   try {
     const { name, category, date } = req.body;
     await createProject(req.user.userId, name, category, date);
-    res.status(200).send("Project added");
+    res.status(200).send({});
   } catch (error) {
     res.status(500).send({error: error.message});
   }

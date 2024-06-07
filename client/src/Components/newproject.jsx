@@ -70,7 +70,7 @@ function NewProject ({ open, close }) {
             </select>
             <p class="m-1">Due Date:</p>
                 <input type="date" class="mt-1 h-10 border shadow-sm rounded-md" value={date} onChange={e => setDate(e.target.value)} />
-            <button type="button" class="my-5 h-10 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 rounded-md text-white w-1/2 m-auto" onClick={createProject}>Create</button>
+            <button type="button" class="my-5 h-10 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 rounded-md text-white w-1/2 m-auto" onClick={() => {createProject();close();}}>Create</button>
         </div>
         </>
     )

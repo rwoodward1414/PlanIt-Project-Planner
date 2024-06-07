@@ -36,7 +36,7 @@ function PageList(){
     }
 
     return (
-    <div class='h-full flex bg-emerald-100'>
+    <div class='h-screen bg-emerald-100'>
         {/* {token ? (
             <Link to="/dashboard">Dashboard</Link>
         ) : (
